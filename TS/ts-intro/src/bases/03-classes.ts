@@ -34,7 +34,7 @@ export class Gimnasio{
     ){}
 }
 
-//---gettes de clases y metodos
+//---getters de clases y metodos
 
 export class PokemonClase {
 
