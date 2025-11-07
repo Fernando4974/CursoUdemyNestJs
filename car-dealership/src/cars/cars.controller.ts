@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Patch,
   Delete,
@@ -10,8 +9,8 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
-import { Json } from 'sequelize/lib/utils';
 import { CreateCarDto } from './dto/create-car.dto';
+import { UpdateCarDto } from './dto/update-car.dto';
 
 @Controller('cars')
 export class CarsController {
@@ -24,7 +23,7 @@ export class CarsController {
   }
   @Get(':id')
   getCarById(
-    @Param('id', new ParseUUIDPipe({ version: '4', errorHttpStatusCode: 404 }))
+    @Param('id', new ParseUUIDPipe())
     id: string,
   ) {
     const cars = this._carService.getCarById(id);
@@ -33,19 +32,23 @@ export class CarsController {
   }
   @Post('/create')
   createCar(@Body() createCarDto: CreateCarDto) {
+    this._carService.createCar(createCarDto);
+    console.log('Creating car:', createCarDto);
     return createCarDto;
   }
+  // @Patch(':id')
+  // updateCar(@Param('id', ParseUUIDPipe) id: string) {
+  //   return `This action updates a #${id} car`;
+  // }
   @Patch(':id/update')
-  updateCar(@Param('id', ParseIntPipe) id: number) {
-    return `This action updates a #${id} car`;
-  }
-  @Patch(':id/update')
-  updateCarByBody(@Body() body: Json) {
-    // crear interface per al body de este endpoint
-    return body;
+  updateCarByBody(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateCarDto: UpdateCarDto,
+  ) {
+    return this._carService.updateCar(id, updateCarDto);
   }
   @Delete(':id/delete')
-  deleteCar(@Param('id', ParseIntPipe) id: number) {
-    return `This action deletes a #${id} car`;
+  deleteCar(@Param('id', ParseUUIDPipe) id: string) {
+    return this._carService.deleteCar(id);
   }
 }
